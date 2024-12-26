@@ -18,7 +18,7 @@ export default function AddTopic() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/topics", {
+      const res = await fetch("/api/topics", { // Use relative URL
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -32,7 +32,7 @@ export default function AddTopic() {
         throw new Error("Failed to create a topic");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
     }
   };
 
