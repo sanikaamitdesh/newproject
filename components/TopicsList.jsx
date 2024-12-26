@@ -10,14 +10,22 @@ const getTopics = async () => {
     if (!res.ok) {
       throw new Error("Failed to fetch topics");
     }
-    return res.json();
+    const data = await res.json();
+    return data; // Return the raw response data
   } catch (error) {
     console.log("Error loading topics:", error);
+    return { topics: [] }; // Return empty topics array if an error occurs
   }
 };
 
 export default async function TopicsList() {
-  const { topics } = await getTopics();
+  const { topics } = await getTopics();  // topics will always be an array now
+
+  // If topics is empty, you could display a message like this:
+  if (topics.length === 0) {
+    return <p>No topics available</p>;
+  }
+
   return (
     <div className="space-y-6">
       {topics.map(t => (
