@@ -1,53 +1,46 @@
-import RemoveBtn from "./Removebtn";
-import { HiPencilAlt } from "react-icons/hi";
 import Link from "next/link";
+import RemoveBtn from "./RemoveBtn";
+import { HiPencilAlt } from "react-icons/hi";
 
 const getTopics = async () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   try {
-    const res = await fetch(`${apiUrl}/api/topics`, {
-        cache: "no-store", // Use cache for static pre-rendering
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/topics`, {
+      cache: "no-store",
     });
+
     if (!res.ok) {
       throw new Error("Failed to fetch topics");
     }
-    const data = await res.json();
-    return data; // Return raw response data
+
+    return res.json();
   } catch (error) {
-    console.log("Error loading topics:", error);
-    return { topics: [] }; // Return empty topics array if an error occurs
+    console.log("Error loading topics: ", error);
   }
 };
 
 export default async function TopicsList() {
   const { topics } = await getTopics();
 
-  if (topics.length === 0) {
-    return <p>No topics available</p>;
-  }
-
   return (
-    <div className="space-y-6">
+    <>
       {topics.map((t) => (
         <div
           key={t._id}
-          className="bg-white shadow-lg rounded-lg p-6 flex justify-between items-center hover:shadow-xl transition-shadow duration-300"
+          className="p-4 border border-slate-300 my-3 flex justify-between gap-5 items-start"
         >
-          <div className="flex-1">
-            <h2 className="text-2xl font-semibold text-gray-800">{t.title}</h2>
-            <p className="text-sm text-gray-600 mt-2">{t.description}</p>
+          <div>
+            <h2 className="font-bold text-2xl">{t.title}</h2>
+            <div>{t.description}</div>
           </div>
-          <div className="flex gap-4">
+
+          <div className="flex gap-2">
             <RemoveBtn id={t._id} />
-            <Link
-              href={`/editTopic/${t._id}`}
-              className="text-blue-600 hover:text-blue-800"
-            >
+            <Link href={`/editTopic/${t._id}`}>
               <HiPencilAlt size={24} />
             </Link>
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
