@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 export default function EditTopicForm({ id, title, description }) {
   const [newTitle, setNewTitle] = useState(title);
   const [newDescription, setNewDescription] = useState(description);
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/topics/${id}`, { // Updated to relative URL
+      const res = await fetch(`${apiUrl}/api/topics/${id}`, { // Updated to relative URL
         method: "PUT",
         headers: {
           "Content-type": "application/json",

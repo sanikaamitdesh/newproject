@@ -8,7 +8,7 @@ export default function AddTopic() {
   const [description, setDescription] = useState("");
 
   const router = useRouter();
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,7 +18,7 @@ export default function AddTopic() {
     }
 
     try {
-      const res = await fetch("/api/topics", { // Use relative URL
+      const res = await fetch(`${apiUrl}/api/topics`, { // Use relative URL
         method: "POST",
         headers: {
           "Content-type": "application/json",
