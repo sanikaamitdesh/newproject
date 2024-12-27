@@ -1,14 +1,10 @@
-export const dynamic = "force-dynamic"; // Ensures the page is rendered dynamically at runtime
-
 import Link from "next/link";
 import RemoveBtn from "./Removebtn";
 import { HiPencilAlt } from "react-icons/hi";
 
 const getTopics = async () => {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/topics`;
-
   try {
-    const res = await fetch(apiUrl, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/topics`, {
       cache: "no-store",
     });
 
@@ -16,40 +12,44 @@ const getTopics = async () => {
       throw new Error("Failed to fetch topics");
     }
 
-    return await res.json();
+    return res.json();
   } catch (error) {
-    console.error("Error loading topics:", error);
-    return { topics: [] }; // Return default structure to prevent errors
+    console.log("Error loading topics: ", error);
+    return { topics: [] }; // Return an empty array if there is an error
   }
 };
 
 export default async function TopicsList() {
-  const { topics } = await getTopics();
+  const { topics = [] } = await getTopics(); // Default to an empty array if getTopics fails
 
   return (
-    <>
-      {topics.length === 0 ? (
-        <div>No topics available.</div>
-      ) : (
+    <div className="max-w-3xl mx-auto mt-8">
+      {topics.length > 0 ? (
         topics.map((t) => (
           <div
             key={t._id}
-            className="p-4 border border-slate-300 my-3 flex justify-between gap-5 items-start"
+            className="p-4 border border-slate-300 rounded-lg shadow-sm my-3 flex justify-between items-start gap-5 bg-white hover:shadow-md transition-shadow duration-300"
           >
             <div>
-              <h2 className="font-bold text-2xl">{t.title}</h2>
-              <div>{t.description}</div>
+              <h2 className="font-bold text-xl text-gray-800">{t.title}</h2>
+              <p className="text-gray-600 mt-1">{t.description}</p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex justify-center items-center gap-2">
               <RemoveBtn id={t._id} />
               <Link href={`/editTopic/${t._id}`}>
-                <HiPencilAlt size={24} />
+                <HiPencilAlt
+                  size={24}
+                  className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
+                  aria-label="Edit Topic"
+                />
               </Link>
             </div>
           </div>
         ))
+      ) : (
+        <p className="text-center text-gray-600">No topics found.</p>
       )}
-    </>
+    </div>
   );
 }
